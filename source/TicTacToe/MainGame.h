@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Player.h"
+
 namespace TicTacToe
 {
 	/**
@@ -9,9 +11,9 @@ namespace TicTacToe
 	{
 	public:
 		/**
-		* The default constructor for MainGame.
+		* Constructor for MainGame, to initialize member variables.
 		*/
-		MainGame() = default;
+		MainGame();
 
 		/**
 		* The default destructor for MainGame.
@@ -27,11 +29,29 @@ namespace TicTacToe
 		*/
 		void Run();
 
+		/**
+		* Main game loop where the actual game is played.
+		*/
+		void Update();
+
 	private:
-		enum class GameMode
+		void PromptForGameMode();
+
+		void PromptForPlayerWeapons();
+
+		/**
+		* Enum of states present in this game.
+		*/
+		enum class GameState : char
 		{
-			MainMenu,
-			
+			MainMenu			= '0',
+			SinglePlayerGame	= '1',
+			MultiPlayerGame		= '2',
+			Quit				= 'q'
 		};
+
+		GameState mGameState; /**< The current state of the game. */
+		Player mPlayer1;
+		Player mPlayer2;
 	};
 }
