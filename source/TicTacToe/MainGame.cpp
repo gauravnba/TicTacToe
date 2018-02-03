@@ -1,15 +1,25 @@
 #include "pch.h"
 
-#include "MainGame.h"
 #include "Board.h"
+#include "MainGame.h"
 
 using namespace std;
 
 namespace TicTacToe
 {
+	const unordered_map<GameState, string> MainGame::GAME_OVER_PROMPTS = {	{GameState::Draw, "The game was a draw. "},
+																			{GameState::PlayerXWins, "Player x won the game. "},
+																			{GameState::PlayerOWins, "Player y won the game. "} };
+
 	MainGame::MainGame() :
 		mGameState(GameState::MainMenu)
 	{
+		// Populate the mPlayers vector with our two players.
+		mPlayers.reserve(2);
+		Player player1;
+		mPlayers.push_back(player1);
+		Player player2;
+		mPlayers.push_back(player2);
 	}
 
 	void MainGame::Run()
@@ -17,24 +27,37 @@ namespace TicTacToe
 		// Display the main menu.
 		while (mGameState == GameState::MainMenu)
 		{
-			PromptForGameMode();
-			PromptForPlayerWeapons();
+			promptForGameMode();
+			promptForPlayerWeapons();
 			Update();
 		}
 	}
 
 	void MainGame::Update()
 	{
+		system("cls");
+
 		Board board;
 		while (mGameState == GameState::SinglePlayerGame || mGameState == GameState::MultiPlayerGame)
 		{
-			board.Draw();
-			mPlayer1.Update(board);
-			mPlayer2.Update(board);
+			for (uint32_t i = 0; i < mPlayers.size(); ++i)
+			{
+				mPlayers[i].Update(board, mGameState);
+				board.Update(mGameState, mPlayers[i].Piece());
+				board.Draw();
+				
+				if (!(mGameState == GameState::SinglePlayerGame || mGameState == GameState::MultiPlayerGame)) break;
+			}
+		}
+
+		if (mGameState != GameState::Quit)
+		{
+			cout << GAME_OVER_PROMPTS.at(mGameState);
+			gameOver();
 		}
 	}
 
-	void MainGame::PromptForGameMode()
+	void MainGame::promptForGameMode()
 	{
 		char input;
 
@@ -57,7 +80,7 @@ namespace TicTacToe
 		mGameState = static_cast<GameState>(input);
 	}
 
-	void MainGame::PromptForPlayerWeapons()
+	void MainGame::promptForPlayerWeapons()
 	{
 		char input = 0;
 
@@ -67,16 +90,32 @@ namespace TicTacToe
 		{
 			cout << "Select weapon (either 'x' or 'o') for Player 1" << endl;
 			cin >> input;
-			mPlayer1.SetPlayerWeapon(input);
+
+			if (input == 'q')
+			{
+				mGameState = GameState::Quit;
+				return;
+			}
+
+			mPlayers[0].SetPlayerWeapon(input);
 
 			if (input == 'x')
 			{
-				mPlayer2.SetPlayerWeapon('o');
+				mPlayers[1].SetPlayerWeapon('o');
 			}
 			else if (input == 'o')
 			{
-				mPlayer2.SetPlayerWeapon('x');
+				mPlayers[1].SetPlayerWeapon('x');
 			}
 		}
+	}
+
+	void MainGame::gameOver()
+	{
+		char input;
+		cout << "Enter 'y' to go back to the Main Menu or 'q' to quit." << endl;
+		cin >> input;
+		if (input == 'q') return;
+		else if (input == 'y') mGameState = GameState::MainMenu;
 	}
 }

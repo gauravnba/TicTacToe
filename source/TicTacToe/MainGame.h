@@ -5,6 +5,20 @@
 namespace TicTacToe
 {
 	/**
+	* Enum of states present in this game.
+	*/
+	enum class GameState : char
+	{
+		MainMenu			= '0',
+		SinglePlayerGame	= '1',
+		MultiPlayerGame		= '2',
+		Quit				= 'q',
+		PlayerXWins			= 'w',
+		PlayerOWins			= 'l',
+		Draw				= 'd'
+	};
+
+	/**
 	* MainGame is the class that runs the game from start to quitting. It supports multiple modes and houses the game loop.
 	*/
 	class MainGame
@@ -35,23 +49,15 @@ namespace TicTacToe
 		void Update();
 
 	private:
-		void PromptForGameMode();
+		void promptForGameMode();
 
-		void PromptForPlayerWeapons();
+		void promptForPlayerWeapons();
 
-		/**
-		* Enum of states present in this game.
-		*/
-		enum class GameState : char
-		{
-			MainMenu			= '0',
-			SinglePlayerGame	= '1',
-			MultiPlayerGame		= '2',
-			Quit				= 'q'
-		};
+		void gameOver();
 
 		GameState mGameState; /**< The current state of the game. */
-		Player mPlayer1;
-		Player mPlayer2;
+		std::vector<Player> mPlayers;
+
+		static const std::unordered_map<GameState, std::string> GAME_OVER_PROMPTS;
 	};
 }
