@@ -8,9 +8,9 @@ using namespace std;
 namespace TicTacToe
 {
 	const uint32_t Board::MAX_POSITIONS_ON_BOARD = 9;
-	const map<int32_t, GameState> Board::MATCHSTATE_TO_GAMESTATE_MAP = {{-2, GameState::PlayerOWins},
+	const map<int32_t, GameState> Board::MATCHSTATE_TO_GAMESTATE_MAP = {{-10, GameState::PlayerXWins},
 																		{1, GameState::Draw},
-																		{2, GameState::PlayerXWins} };
+																		{10, GameState::PlayerOWins} };
 
 	Board::Board() :
 		mMovesPlayed(0)
@@ -45,7 +45,7 @@ namespace TicTacToe
 	void Board::Update(GameState& gameState, char playerPiece)
 	{
 		int32_t result = CalculateWinningState(playerPiece);
-		if (result == -2 || result == 1 || result == 2)
+		if (result != 0)
 		{
 			gameState = MATCHSTATE_TO_GAMESTATE_MAP.at(result);
 		}
@@ -53,22 +53,23 @@ namespace TicTacToe
 
 	int32_t Board::CalculateWinningState(char piece)
 	{
-		if (mMovesPlayed >= MAX_POSITIONS_ON_BOARD)
-		{
-			return 1;
-		}
-
 		if (didPlayerWin(piece))
 		{
 			if (piece == 'x')
 			{
-				return -2;
+				return -10;
 			}
 			else if (piece == 'o')
 			{
-				return 2;
+				return 10;
 			}
 		}
+		else if (mMovesPlayed >= MAX_POSITIONS_ON_BOARD)
+		{
+			return 1;
+		}
+
+		return 0;
 	}
 
 	void Board::RemovePiece(std::uint32_t position)

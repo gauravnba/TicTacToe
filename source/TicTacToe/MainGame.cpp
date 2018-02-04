@@ -99,13 +99,16 @@ namespace TicTacToe
 					return;
 				}
 
-				if (input == 'x')
+				if (mGameState == GameState::SinglePlayerGame)
 				{
-					mPlayers[1].SetHumanity(false);
-				}
-				else if (input == 'o')
-				{
-					mPlayers[0].SetHumanity(false);
+					if (input == 'x')
+					{
+						mPlayers[1].SetHumanity(false);
+					}
+					else if (input == 'o')
+					{
+						mPlayers[0].SetHumanity(false);
+					}
 				}
 			}
 		}

@@ -12,6 +12,8 @@ namespace TicTacToe
 		mIsHuman(true)
 	{
 		mPiece = piece;
+
+		(mPiece == 'x') ? mOtherPiece = 'o' : mOtherPiece = 'x';
 	}
 
 	void Player::SetHumanity(bool isHuman)
@@ -65,7 +67,7 @@ namespace TicTacToe
 				board.PlacePiece(i, mPiece, isPlacementSuccessful);
 				if (isPlacementSuccessful)
 				{
-					int32_t moveValue = max(bestValue, minimax(board, 0, false));
+					int32_t moveValue = minimax(board, false);
 					board.RemovePiece(i);
 
 					if (moveValue > bestValue)
@@ -85,20 +87,10 @@ namespace TicTacToe
 		return mPiece;
 	}
 
-	int32_t Player::minimax(Board& board, int depth, bool isMaximizer)
+	int32_t Player::minimax(Board& board, bool isMaximizer)
 	{
-		char otherPiece;
-		if (mPiece == 'x')
-		{
-			otherPiece = 'o';
-		}
-		else
-		{
-			otherPiece = 'x';
-		}
-
 		int32_t result = board.CalculateWinningState(mPiece);
-		if ((result == -2) || (result == 1) || (result == 2)) return result;
+		if (result != 0) return result;
 
 		if (isMaximizer)
 		{
@@ -110,7 +102,7 @@ namespace TicTacToe
 				board.PlacePiece(i, mPiece, isPlacementSuccessful);
 				if (isPlacementSuccessful)
 				{
-					best = max(best, minimax(board, depth + 1, !isMaximizer));
+					best = max(best, minimax(board, !isMaximizer));
 					board.RemovePiece(i);
 				}
 			}
@@ -123,10 +115,10 @@ namespace TicTacToe
 			for (uint32_t i = 0; i < board.MAX_POSITIONS_ON_BOARD; ++i)
 			{
 				bool isPlacementSuccessful = true;
-				board.PlacePiece(i, otherPiece, isPlacementSuccessful);
+				board.PlacePiece(i, mOtherPiece, isPlacementSuccessful);
 				if (isPlacementSuccessful)
 				{
-					best = max(best, minimax(board, depth + 1, !isMaximizer));
+					best = max(best, minimax(board, !isMaximizer));
 					board.RemovePiece(i);
 				}
 			}

@@ -43,11 +43,12 @@ namespace TicTacToe
 		*/
 		char Piece();
 	private:
-		void recurseIntoMinimax();
+		//void recurseIntoMinimax();
 
-		std::int32_t minimax(Board& board, int depth, bool isMaximizingPlayer);
+		std::int32_t minimax(Board& board, bool isMaximizingPlayer);
 
 		char mPiece;		/**< The piece used to play by this player. */
+		char mOtherPiece;	/**< The piece used to play by the other player. */
 		bool mIsHuman;		/**< Whether this player is a human player. */
 	};
 }
