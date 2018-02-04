@@ -8,6 +8,9 @@ using namespace std;
 namespace TicTacToe
 {
 	const uint32_t Board::MAX_POSITIONS_ON_BOARD = 9;
+	const map<int32_t, GameState> Board::MATCHSTATE_TO_GAMESTATE_MAP = {{-2, GameState::PlayerOWins},
+																		{1, GameState::Draw},
+																		{2, GameState::PlayerXWins} };
 
 	Board::Board() :
 		mMovesPlayed(0)
@@ -23,7 +26,7 @@ namespace TicTacToe
 			"-----------\n" <<
 			' ' << mBoard[3] << " | " << mBoard[4] << " | " << mBoard[5] << "\n" <<
 			"-----------\n" <<
-			' ' << mBoard[6] << " | " << mBoard[7] << " | " << mBoard[8] << endl;
+			' ' << mBoard[6] << " | " << mBoard[7] << " | " << mBoard[8] << "\n\n" <<endl;
 	}
 
 	void Board::PlacePiece(uint32_t position, char character, bool& isPlacementSuccessful)
@@ -41,23 +44,37 @@ namespace TicTacToe
 
 	void Board::Update(GameState& gameState, char playerPiece)
 	{
+		int32_t result = CalculateWinningState(playerPiece);
+		if (result == -2 || result == 1 || result == 2)
+		{
+			gameState = MATCHSTATE_TO_GAMESTATE_MAP.at(result);
+		}
+	}
+
+	int32_t Board::CalculateWinningState(char piece)
+	{
 		if (mMovesPlayed >= MAX_POSITIONS_ON_BOARD)
 		{
-			gameState = GameState::Draw;
-			return;
+			return 1;
 		}
 
-		if (didPlayerWin(playerPiece))
+		if (didPlayerWin(piece))
 		{
-			if (playerPiece == 'x')
+			if (piece == 'x')
 			{
-				gameState = GameState::PlayerXWins;
+				return -2;
 			}
-			else if (playerPiece == 'o')
+			else if (piece == 'o')
 			{
-				gameState = GameState::PlayerOWins;
+				return 2;
 			}
 		}
+	}
+
+	void Board::RemovePiece(std::uint32_t position)
+	{
+		mBoard[position] = ' ';
+		--mMovesPlayed;
 	}
 
 	bool Board::checkLineForWin(char playerPiece, uint32_t position1, uint32_t position2, uint32_t position3)

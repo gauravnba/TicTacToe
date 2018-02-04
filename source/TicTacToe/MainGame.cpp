@@ -7,19 +7,17 @@ using namespace std;
 
 namespace TicTacToe
 {
-	const unordered_map<GameState, string> MainGame::GAME_OVER_PROMPTS = {	{GameState::Draw, "The game was a draw. "},
+	const map<GameState, string> MainGame::GAME_OVER_PROMPTS = {	{GameState::Draw, "The game was a draw. "},
 																			{GameState::PlayerXWins, "Player x won the game. "},
-																			{GameState::PlayerOWins, "Player y won the game. "} };
+																			{GameState::PlayerOWins, "Player o won the game. "} };
 
 	MainGame::MainGame() :
 		mGameState(GameState::MainMenu)
-	{
+	{ 
 		// Populate the mPlayers vector with our two players.
 		mPlayers.reserve(2);
-		Player player1;
-		mPlayers.push_back(player1);
-		Player player2;
-		mPlayers.push_back(player2);
+		Player player1('x'), player2('o');
+		mPlayers = { player1, player2 };
 	}
 
 	void MainGame::Run()
@@ -82,30 +80,33 @@ namespace TicTacToe
 
 	void MainGame::promptForPlayerWeapons()
 	{
-		char input = 0;
-
-		// Wait for user input for selection of nought or cross.
-		// Again, using XNOR.
-		while (!(input == 'x' || input == 'o'))
+		// Check in case the player decided to quit earlier.
+		if (mGameState == GameState::SinglePlayerGame)
 		{
-			cout << "Select weapon (either 'x' or 'o') for Player 1" << endl;
-			cin >> input;
+			char input = 0;
 
-			if (input == 'q')
+			// Wait for user input for selection of nought or cross.
+			// Again, check while using XNOR.
+			while (!(input == 'x' || input == 'o'))
 			{
-				mGameState = GameState::Quit;
-				return;
-			}
+				cout << "Select weapon (either 'x' or 'o') for Player 1" << endl;
+				cin >> input;
 
-			mPlayers[0].SetPlayerWeapon(input);
+				// Quit if input was q. This condition returns to Run().
+				if (input == 'q')
+				{
+					mGameState = GameState::Quit;
+					return;
+				}
 
-			if (input == 'x')
-			{
-				mPlayers[1].SetPlayerWeapon('o');
-			}
-			else if (input == 'o')
-			{
-				mPlayers[1].SetPlayerWeapon('x');
+				if (input == 'x')
+				{
+					mPlayers[1].SetHumanity(false);
+				}
+				else if (input == 'o')
+				{
+					mPlayers[0].SetHumanity(false);
+				}
 			}
 		}
 	}

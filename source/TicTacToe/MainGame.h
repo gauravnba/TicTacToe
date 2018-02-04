@@ -58,6 +58,6 @@ namespace TicTacToe
 		GameState mGameState; /**< The current state of the game. */
 		std::vector<Player> mPlayers;
 
-		static const std::unordered_map<GameState, std::string> GAME_OVER_PROMPTS;
+		static const std::map<GameState, std::string> GAME_OVER_PROMPTS;
 	};
 }

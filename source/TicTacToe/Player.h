@@ -12,10 +12,13 @@ namespace TicTacToe
 	class Player
 	{
 	public:
+		Player() = delete;
+
 		/**
-		* Default constructor of Player class.
+		* Player constructor. Needs which piece to use.
+		* @param piece Is a char value, a nought or a cross.
 		*/
-		Player() = default;
+		Player(char piece);
 
 		/**
 		* Default destructor for Player class.
@@ -23,10 +26,10 @@ namespace TicTacToe
 		~Player() = default;
 
 		/**
-		* Mutator for the member variable mWeapon, which holds whether the player is using a nought or a cross.
-		* @param character Is a char value, a nought or a cross.
+		* Mutator for the member variable mIsWeapon, which holds whether the player is a human or AI.
+		* @param isHuman new value to be assigned to isHuman.
 		*/
-		void SetPlayerWeapon(char character);
+		void SetHumanity(bool isHuman);
 
 		/**
 		* Update method updates the characters on the board every round.
@@ -40,6 +43,11 @@ namespace TicTacToe
 		*/
 		char Piece();
 	private:
-		char mPiece;		/**<  */
+		void recurseIntoMinimax();
+
+		std::int32_t minimax(Board& board, int depth, bool isMaximizingPlayer);
+
+		char mPiece;		/**< The piece used to play by this player. */
+		bool mIsHuman;		/**< Whether this player is a human player. */
 	};
 }
