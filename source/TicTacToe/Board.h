@@ -13,6 +13,10 @@ namespace TicTacToe
 	public:
 		static const std::uint32_t MAX_POSITIONS_ON_BOARD;	/**< const value. Maximum number of moves available on the board. */
 
+		// Delete the board move constructor and copy constructor.
+		Board(const Board&) = delete;
+		Board(Board&&) = delete;
+
 		/**
 		* Constructor for the Board. To initialize the board.
 		*/
@@ -32,16 +36,15 @@ namespace TicTacToe
 		* Used by the Player Update method to place the player's piece on the board.
 		* @param position position at which to place the piece.
 		* @param character the character that the piece is represented as.
-		* @param isPlaceSuccessful bool output parameter, to noptify if the placement was succesful.
+		* @return boolean True if placement was successful.
 		*/
-		void PlacePiece(std::uint32_t position, char character, bool& isPlacementSuccessful);
+		bool PlacePiece(std::uint32_t position, char character);
 
 		/**
 		* Update method of Board, checks for wins by a player.
 		* @param gameState the current state of the game.
-		* @param playerPiece 
 		*/
-		void Update(GameState& gameState, char playerPiece);
+		void Update(GameState& gameState);
 
 		/**
 		* Removes the piece at position, leaving the spot empty.
@@ -49,7 +52,18 @@ namespace TicTacToe
 		*/
 		void RemovePiece(std::uint32_t position);
 
-		int32_t CalculateWinningState(char piece);
+		/**
+		* Checks if the piece is winning or losing or if it's a draw or no result.
+		* @param piece The piece which needs to be checked for winning condition.
+		* @return returns int value 10 if the piece is winning, -10 if losing, 0 if draw, -1 if it's no result.
+		*/
+		int32_t WinningStateOfPiece(char piece);
+
+		/**
+		* Accessor for the number of moves played so far.
+		* @return Returns an unsigned int of the number of played played.
+		*/
+		uint32_t MovesPlayed();
 
 	private:
 		/**

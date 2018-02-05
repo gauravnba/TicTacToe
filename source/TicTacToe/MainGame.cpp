@@ -8,8 +8,8 @@ using namespace std;
 namespace TicTacToe
 {
 	const map<GameState, string> MainGame::GAME_OVER_PROMPTS = {	{GameState::Draw, "The game was a draw. "},
-																			{GameState::PlayerXWins, "Player x won the game. "},
-																			{GameState::PlayerOWins, "Player o won the game. "} };
+																	{GameState::PlayerXWins, "Player x won the game. "},
+																	{GameState::PlayerOWins, "Player o won the game. "} };
 
 	MainGame::MainGame() :
 		mGameState(GameState::MainMenu)
@@ -41,7 +41,7 @@ namespace TicTacToe
 			for (uint32_t i = 0; i < mPlayers.size(); ++i)
 			{
 				mPlayers[i].Update(board, mGameState);
-				board.Update(mGameState, mPlayers[i].Piece());
+				board.Update(mGameState);
 				board.Draw();
 				
 				if (!(mGameState == GameState::SinglePlayerGame || mGameState == GameState::MultiPlayerGame)) break;
@@ -119,7 +119,15 @@ namespace TicTacToe
 		char input;
 		cout << "Enter 'y' to go back to the Main Menu or 'q' to quit." << endl;
 		cin >> input;
-		if (input == 'q') return;
-		else if (input == 'y') mGameState = GameState::MainMenu;
+		if (input == 'q')
+		{
+			return;
+		}
+		else if (input == 'y') 
+		{
+			mGameState = GameState::MainMenu;
+			mPlayers[0].SetHumanity(true);
+			mPlayers[1].SetHumanity(true);
+		}
 	}
 }

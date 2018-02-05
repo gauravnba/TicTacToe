@@ -49,15 +49,24 @@ namespace TicTacToe
 		void Update();
 
 	private:
+		/**
+		* Helper method to ask the user whether they want to play multiplayer or single player.
+		*/
 		void promptForGameMode();
 
+		/**
+		* Helper method to ask which piece the user would like to use.
+		*/
 		void promptForPlayerWeapons();
 
+		/**
+		* Helper method, triggered when a game over state is encountered.
+		*/
 		void gameOver();
 
-		GameState mGameState; /**< The current state of the game. */
-		std::vector<Player> mPlayers;
+		GameState mGameState;				/**< The current state of the game. */
+		std::vector<Player> mPlayers;		/**< The players, currently in the game. The list will always be of size 2. */
 
-		static const std::map<GameState, std::string> GAME_OVER_PROMPTS;
+		static const std::map<GameState, std::string> GAME_OVER_PROMPTS; /**< A const map of GameState to string pairs, used to store which string is to be called upon game over. */
 	};
 }

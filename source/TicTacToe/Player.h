@@ -12,7 +12,12 @@ namespace TicTacToe
 	class Player
 	{
 	public:
+		// Delete the default constructor for Player.
 		Player() = delete;
+
+		// Use the Default copy and move constructors.
+		Player(const Player&) = default;
+		Player(Player&&) = default;
 
 		/**
 		* Player constructor. Needs which piece to use.
@@ -43,9 +48,34 @@ namespace TicTacToe
 		*/
 		char Piece();
 	private:
-		//void recurseIntoMinimax();
+		/**
+		* The struct used to hold each move step for calculating the best move.
+		*/
+		struct AIMove 
+		{
+			/**
+			* Default constructor for AIMove.
+			*/
+			AIMove() = default;
 
-		std::int32_t minimax(Board& board, bool isMaximizingPlayer);
+			/**
+			* Constructor for AIMove taht accepts a score parameter.
+			* @param score Score parameter for this move.
+			*/
+			AIMove(std::int32_t score);
+
+			std::int32_t mScore;		/**< Stores the score associated to the move. */
+			std::uint32_t mMove;		/**< The position to move to in this move. */
+		};
+
+		/**
+		* Calculates the optimum next move for the non-human player, using the minimax algorithm.
+		* @param board A reference to the board being used by the game.
+		* @param piece The piece to calculate the best move for.
+		* @param isThisPlayer boolean value that denotes whether the current move is for this Player.
+		* @return A copy of the optimum AIMove.
+		*/
+		AIMove calculateBestMove(Board& board, char piece, bool isThisPlayer);
 
 		char mPiece;		/**< The piece used to play by this player. */
 		char mOtherPiece;	/**< The piece used to play by the other player. */

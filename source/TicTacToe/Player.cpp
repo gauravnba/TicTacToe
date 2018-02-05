@@ -13,7 +13,12 @@ namespace TicTacToe
 	{
 		mPiece = piece;
 
-		(mPiece == 'x') ? mOtherPiece = 'o' : mOtherPiece = 'x';
+		mOtherPiece = (mPiece == 'x') ? 'o' : 'x';
+	}
+
+	Player::AIMove::AIMove(int32_t score) :
+		mScore(score)
+	{
 	}
 
 	void Player::SetHumanity(bool isHuman)
@@ -45,10 +50,7 @@ namespace TicTacToe
 				// Convert the char type input to integer value.
 				input = input - '0';
 
-				bool isPlacementSuccessful = true;
-				board.PlacePiece(static_cast<uint32_t>(input), mPiece, isPlacementSuccessful);
-
-				if (!isPlacementSuccessful)
+				if (!board.PlacePiece(static_cast<uint32_t>(input), mPiece))
 				{
 					input = 9;
 					cout << "Please enter a valid position.";
@@ -58,27 +60,8 @@ namespace TicTacToe
 
 		else
 		{
-			uint32_t moveTo = 0;
-			int32_t bestValue = -100;
-
-			for (uint32_t i = 0; i < board.MAX_POSITIONS_ON_BOARD; ++i)
-			{
-				bool isPlacementSuccessful = true;
-				board.PlacePiece(i, mPiece, isPlacementSuccessful);
-				if (isPlacementSuccessful)
-				{
-					int32_t moveValue = minimax(board, false);
-					board.RemovePiece(i);
-
-					if (moveValue > bestValue)
-					{
-						moveTo = i;
-					}
-				}
-			}
-
-			bool dummy = true;
-			board.PlacePiece(moveTo, mPiece, dummy);
+			AIMove bestMove = calculateBestMove(board, mPiece, true);
+			board.PlacePiece(bestMove.mMove, mPiece);
 		}
 	}
 
@@ -87,42 +70,64 @@ namespace TicTacToe
 		return mPiece;
 	}
 
-	int32_t Player::minimax(Board& board, bool isMaximizer)
+	Player::AIMove Player::calculateBestMove(Board& board, char piece, bool isThisPlayer)
 	{
-		int32_t result = board.CalculateWinningState(mPiece);
-		if (result != 0) return result;
-
-		if (isMaximizer)
+		// Check if the piece is in winning state, losing state or a draw.
+		int32_t boardState = board.WinningStateOfPiece(mPiece);
+		if (boardState != -1)
 		{
-			int32_t best = -100;
-
-			for (uint32_t i = 0; i < board.MAX_POSITIONS_ON_BOARD; ++i)
-			{
-				bool isPlacementSuccessful = true;
-				board.PlacePiece(i, mPiece, isPlacementSuccessful);
-				if (isPlacementSuccessful)
-				{
-					best = max(best, minimax(board, !isMaximizer));
-					board.RemovePiece(i);
-				}
-			}
-			return best;
+			AIMove move = boardState;
+			return move;
 		}
 
-		else 
+		vector<AIMove> possibleMoves;
+
+		// Populate vector for possible moves, recursively.
+		for (uint32_t i = 0; i < board.MAX_POSITIONS_ON_BOARD; ++i)
 		{
-			int32_t best = 100;
-			for (uint32_t i = 0; i < board.MAX_POSITIONS_ON_BOARD; ++i)
+			if (board.PlacePiece(i, piece))
 			{
-				bool isPlacementSuccessful = true;
-				board.PlacePiece(i, mOtherPiece, isPlacementSuccessful);
-				if (isPlacementSuccessful)
+				AIMove move;
+				move.mMove = i;
+				if (isThisPlayer)
 				{
-					best = max(best, minimax(board, !isMaximizer));
-					board.RemovePiece(i);
+					move.mScore = calculateBestMove(board, mOtherPiece, !isThisPlayer).mScore;
+				}
+				else
+				{
+					move.mScore = calculateBestMove(board, mPiece, !isThisPlayer).mScore;
+				}
+				possibleMoves.push_back(move);
+				board.RemovePiece(i);
+			}
+		}
+
+		uint32_t bestMove = 0;
+		if (isThisPlayer)
+		{
+			int32_t bestScore = -1000;
+			for (uint32_t i = 0; i < possibleMoves.size(); ++i)
+			{
+				if (possibleMoves[i].mScore > bestScore)
+				{
+					bestMove = i;
+					bestScore = possibleMoves[i].mScore;
 				}
 			}
-			return best;
 		}
+		else
+		{
+			int32_t bestScore = 1000;
+			for (uint32_t i = 0; i < possibleMoves.size(); ++i)
+			{
+				if (possibleMoves[i].mScore < bestScore)
+				{
+					bestMove = i;
+					bestScore = possibleMoves[i].mScore;
+				}
+			}
+		}
+
+		return possibleMoves[bestMove];
 	}
 }
