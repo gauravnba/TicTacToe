@@ -7,7 +7,7 @@ The project was made using Visual Studio 2017 and employs the Minimax algorithm 
 ```
 root/--TicTacToe_Sample--build:   Contains the Visual Studio solution file.
                        |
-                       |-release: Contains the executable to run the game.
+                       |-exec: Contains the executable to run the game.
                        |
                        |-source:  Contains the source files and the project file for Visual Studio.
 ```
