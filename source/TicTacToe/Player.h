@@ -18,6 +18,8 @@ namespace TicTacToe
 		// Use the Default copy and move constructors.
 		Player(const Player&) = default;
 		Player(Player&&) = default;
+		Player& operator=(const Player&) = default;
+		Player& operator=(Player&&) = default;
 
 		/**
 		* Player constructor. Needs which piece to use.

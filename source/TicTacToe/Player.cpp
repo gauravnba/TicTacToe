@@ -72,6 +72,14 @@ namespace TicTacToe
 
 	Player::AIMove Player::calculateBestMove(Board& board, char piece, bool isThisPlayer)
 	{
+		// If it's the first move, play the first position immediately.
+		if (board.MovesPlayed() == 0)
+		{
+			AIMove move = 10;
+			move.mMove = 0;
+			return move;
+		}
+
 		// Check if the piece is in winning state, losing state or a draw.
 		int32_t boardState = board.WinningStateOfPiece(mPiece);
 		if (boardState != -1)
@@ -102,6 +110,7 @@ namespace TicTacToe
 			}
 		}
 
+		// Obtain the min/max value for the best move from the vector of AIMoves.
 		uint32_t bestMove = 0;
 		if (isThisPlayer)
 		{
